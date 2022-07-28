@@ -1,0 +1,1259 @@
+一、linux下如何查看已安装的centos版本信息：
+1.Linux查看当前操作系统版本信息  cat /proc/version
+Linux version 2.6.32-696.el6.x86_64 (mockbuild@c1bm.rdu2.centos.org) (gcc version 4.4.7 20120313 (Red Hat 4.4.7-18) (GCC) ) #1 SMP Tue Mar 21 19:29:05 UTC 2017
+2.Linux查看版本当前操作系统内核信息 uname -a
+Linux localhost.localdomain 2.4.20-8 #1 Thu Mar 13 17:54:28 EST 2003 i686 athlon i386 GNU/Linux
+3.linux查看版本当前操作系统发行信息 cat /etc/issue 或 cat /etc/centos-release
+CentOS release 6.9 (Final)
+4.Linux查看cpu相关信息，包括型号、主频、内核信息等 cat /etc/cpuinfo
+
+getconf LONG_BIT查看是32位还是64位
+-------------------------------------------------------------------------
+一、查看当前版本：
+[root@centos ~]# mysql -V
+二、备份数据库
+备份数据： mysqldump -u root -p --all-databases >/home/dbbak/databases.sql
+mysqldump -u root -p --all-databases >/home/databases3.sql
+三、备份my.cnf配置文件：cp /etc/my.cnf /home/
+
+四、备份其他
+ 查看数据库安装位置  
+whereis mysql
+
+cd /var/lib
+cp -r mysql mysql5.0
+
+cd /usr/share
+cp -r mysql mysql5.0
+
+ cd /usr/lib
+cp -r mysql mysql5.0
+
+五、卸载旧版本MySQL：
+查看已安装的MySQL的rpm包：
+rpm -qa | grep mysql
+rpm -qa | grep MySQL
+yum remove mysql mysql-*
+yum remove mysql MySQL-*
+
+再检查
+
+rpm -qa |grep MySQL 
+
+如果有再卸载
+卸载
+rpm -e **   注意是rpm -qa检查出来的名称
+或者
+先查找
+[root@localhost mysql]# rpm -qa |grep MySQL
+MySQL-client-5.0.15-0.glibc23
+再卸载 MySQL-client-5.0.15-0.glibc23是查找出来的名字
+rpm -ev MySQL-client-5.0.15-0.glibc23
+如果提示错误：error: %preun(xxxxxx) scriptlet failed, exit status 1
+
+则用以下命令尝试：
+rpm -e --noscripts MySQL-client-5.5.25a-1.rhel5
+ rpm -e --nodeps mysql-xxx
+
+六 安装新版本MySQL
+（1）可联网情况下可以使用rpm包安装：
+下载地址：https://dev.mysql.com/downloads/repo/yum/
+
+
+[root@centos ~]# rpm -ivh https://dev.mysql.com/get/mysql57-community-release-el6-11.noarch.rpm
+1
+[root@centos ~]# rpm -ivh https://dev.mysql.com/get/mysql57-community-release-el6-11.noarch.rpm
+或者下载到本地后，使用：yum localinstall mysql57-community-release-el6-11.noarch.rpm 安装
+
+最后使用yum即可安装成功：
+
+
+[root@centos ~]# yum install mysql-server -y
+[root@centos ~]# yum install mysql-devel -y
+1
+2
+[root@centos ~]# yum install mysql-server -y
+[root@centos ~]# yum install mysql-devel -y
+（2）不可联网情况下可以下载完整rpm包安装：
+
+MySQL下载地址：https://dev.mysql.com/downloads/mysql/
+
+下载当前稳定版的rpm包，如：https://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-5.7.19-1.el6.x86_64.rpm-bundle.tar  64位
+
+https://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-5.7.19-1.el6.i686.rpm-bundle.tar 32位的  目前我们安装这个
+
+https://cdn.mysql.com//archives/mysql-5.7/mysql-5.7.19-1.el6.i686.rpm-bundle.tar 32位 也可以下载，速度很慢开始安装
+
+//https://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-5.7.27-1.el6.i686.rpm-bundle.tar      32位更高版本
+
+开始安装
+cd /usr 拷贝mysql-5.7.27-1.el6.i686.rpm-bundle.tar到当前目录下
+[root@localhost usr]# tar -xvf mysql-5.7.19-1.el6.i686.rpm-bundle.tar
+mysql-community-client-5.7.19-1.el6.i686.rpm
+mysql-community-embedded-5.7.19-1.el6.i686.rpm
+mysql-community-libs-5.7.19-1.el6.i686.rpm
+mysql-community-libs-compat-5.7.19-1.el6.i686.rpm
+mysql-community-common-5.7.19-1.el6.i686.rpm
+mysql-community-server-5.7.19-1.el6.i686.rpm
+mysql-community-devel-5.7.19-1.el6.i686.rpm
+mysql-community-test-5.7.19-1.el6.i686.rpm
+mysql-community-embedded-devel-5.7.19-1.el6.i686.rpm
+[root@localhost usr]# mkdir mysql-5.7
+[root@localhost usr]# mv mysql-community-* mysql-5.7/
+[root@localhost usr]# cd mysql-5.7
+
+依次执行
+注意下面的安装顺序：
+-----rpm -ivh rpm包名 --nosignature --nomd5 --nodigest
+rpm -ivh mysql-community-common-5.7.19-1.el6.i686.rpm --nodeps --force
+rpm -ivh mysql-community-libs-5.7.19-1.el6.i686.rpm --nodeps --force
+rpm -ivh mysql-community-libs-compat-5.7.19-1.el6.i686.rpm
+rpm -ivh mysql-community-devel-5.7.19-1.el6.i686.rpm
+rpm -ivh mysql-community-embedded-5.7.19-1.el6.i686.rpm
+rpm -ivh mysql-community-embedded-devell-5.7.19-1.el6.i686.rpm
+rpm -ivh mysql-community-client-5.7.19-1.el6.i686.rpm
+rpm -ivh mysql-community-server-5.7.19-1.el6.i686.rpm
+
+
+
+
+
+---------------
+遇到error: unpacking of archive failed: cpio: Bad magic
+
+---------------------------------------------------------------------
+另外一种mysql-5.7.19-linux-glibc2.12-i686.tar.gz
+1.拷贝 文件mysql-5.7.19-linux-glibc2.12-i686.tar.gz 到/usr下
+2. tar -xzvf mysql-5.7.19-linux-glibc2.12-i686.tar.gz -C /usr/local/
+64位
+tar -xzvf mysql-5.7.19-linux-glibc2.12-x86_64.tar.gz -C /usr/local/
+
+[root@localhost usr]# cd local/
+3.移动解压文件到mysql下
+[root@localhost local]# mv mysql-5.7.19-linux-glibc2.12-i686 mysql
+64未的
+mv mysql-5.7.19-linux-glibc2.12-x86_64 mysql
+
+[root@localhost local]# cd mysql
+4.检查库文件是否有删除，若有便删除（linux系统自带的）
+[root@localhost mysql]# rpm -qa | grep mysql
+有的话删除
+删除
+例如[root@dbserver mysql]# rpm -e --nodeps mysql-5.1.52-1.el6_0.1.i686
+5.检查mysql组和用户是否存在，如无创建
+	[root@dbserver ~]# cat /etc/group | grep mysql
+    [root@dbserver ~]# cat /etc/passwd |grep mysql
+创建
+
+    [root@dbserver ~]#groupadd mysql
+    [root@dbserver ~]#useradd -r -g mysql mysql
+//useradd -r参数表示mysql用户是系统用户，不可用于登录系统
+6：在mysql下添加data目录 （/usr/local/mysql）
+[root@localhost mysql]# mkdir data
+
+7：更改mysql目录下所有的目录及文件夹所属组合用户
+
+[root@localhost mysql]# cd /usr/local/
+[root@localhost local]# chown -R mysql mysql/
+[root@localhost local]# chgrp -R mysql mysql/
+在mysql下
+[root@localhost mysql]# chown -R mysql:mysql ./
+
+----- chmod -R 777 mysql
+[root@localhost local]# cd mysql/
+[root@localhost mysql]# ls -l
+total 56
+drwxr-xr-x  2 mysql mysql  4096 Oct 15 00:28 bin
+-rw-r--r--  1 mysql mysql 17987 Jun 22  2017 COPYING
+drwxr-xr-x  2 root  root   4096 Oct 15 00:32 data
+drwxr-xr-x  2 mysql mysql  4096 Oct 15 00:28 docs
+drwxr-xr-x  3 mysql mysql  4096 Oct 15 00:28 include
+drwxr-xr-x  5 mysql mysql  4096 Oct 15 00:28 lib
+drwxr-xr-x  4 mysql mysql  4096 Oct 15 00:28 man
+-rw-r--r--  1 mysql mysql  2478 Jun 22  2017 README
+drwxr-xr-x 28 mysql mysql  4096 Oct 15 00:28 share
+drwxr-xr-x  2 mysql mysql  4096 Oct 15 00:28 support-files
+
+在/usr/local/mysql/bin下执行
+/usr/local/mysql/bin
+------拷贝 cp /usr/local/mysql/mysql-5.7.19-linux-glibc2.12-x86_64/share/english/errmsg.sys /usr/share/mysql/
+
+// bin/mysqld --defaults-file=/usr/local/mysql-5.7.19-3307/my.cnf --initialize --user=mysqlosf 
+ ./mysqld --initialize --user=mysql --basedir=/usr/local/mysql/--datadir=/usr/local/mysql/data/  
+报错1
+[ERROR] Can't find error-message file '/usr/local/mysql/--datadir=/usr/local/mysql/data/share/errmsg.sys'. Check error-message file location and 'lc-messages-dir' configuration directive.
+解决1：
+./mysqld --initialize --user=mysql --basedir=/usr/local/mysql/ --datadir=/usr/local/mysql/data/ --lc_messages_dir=/usr/local/mysql/share --lc_messages=en_US
+./mysqld --initialize --user=mysql --basedir=/usr/local/mysql/ --datadir=/usr/local/mysql/data/ --lc_messages_dir=/usr/local/mysql/share --lc_messages=en_US
+
+//      ./mysqld --initialize --user=mysql --basedir=/usr/local/mysql/ --datadir=/usr/local/mysql/data/ --lc_messages_dir=/usr/local/mysql/share --l
+./mysqld --initialize --user=mysql --basedir=/usr/local/mysql/ --datadir=/usr/local/mysql/data/ --lc_messages_dir=/usr/local/mysql/mysql-5.7.19-linux-glibc2.12-x86_64/share --lc_messages=en_US
+//   ./mysqld --initialize --user=mysql --basedir=/usr/local/mysql/ --datadir=/usr/local/mysql/data/ --lc_messages_dir=/usr/local/mysql/share --lc_messages=en_US
+// ./mysqld --initialize --user=mysql --basedir=/usr/local/mysql/mysql-5.7.19-linux-glibc2.12-x86_64/--datadir=/usr/local/mysql/data/ --lc_messages_dir=/usr/local/mysql/share --lc_messages=en_US
+报错[ERROR] Can’t find error-message file ‘/usr/local/mysql/–datadir=/usr/local/mysql/data/share/errmsg.sys’. Check error-message file location and ‘lc-messages-dir’ con
+解决：
+//./mysqld --initialize --user=mysql --basedir=/usr/local/mysql/ --datadir=/usr/local/mysql/data/ --lc_messages_dir=/usr/local/mysql/mysql-//5.7.19-linux-glibc2.12-x86_64/share --lc_messages=en_US
+
+安装完成，提示如下：
+2019-10-14T03:35:45.408815Z 0 [Warning] No existing UUID has been found, so we assume that this is the first time that this server has been started. Generating a new UUID: b4b61e7f-ee33-11e9-9c61-000c29e1e997.
+2019-10-14T03:35:45.410716Z 0 [Warning] Gtid table is not ready to be used. Table 'mysql.gtid_executed' cannot be opened.
+2019-10-14T03:35:45.412421Z 1 [Note] A temporary password is generated for root@localhost: ;mk2CXyls2pX
+
+在/usr/local/mysql下
+执行命令： chown -R root:root ./ 修改当前目录拥有者为root用户
+[root@localhost local]# cd mysql
+[root@localhost mysql]# chown -R root:root ./ 
+执行命令： chown -R mysql:mysql ./data
+修改当前data目录拥有者为mysql用户
+[root@localhost mysql]# chown -R mysql:mysql ./data
+
+
+
+9配置my.cnf 
+接下来进入/usr/local/mysql/support-files/目录下 
+查看是否存在my-default.cnf文件，如果存在直接copy到/etc/my.cnf文件中
+
+    [root@dbserver mysql]# cp -a ./support-files/my-default.cnf /etc/my.cnf
+
+如果不存在my-default.cnf文件,则在/etc/目录下创建my.cnf,并写入以下内容
+#[mysql]  
+#basedir=/usr/local/mysql/  
+#datadir=/usr/local/mysql/data/
+
+10 启动登陆
+
+[root@localhost etc]# cd /usr/local/mysql/bin
+ [root@localhost bin]# ./mysqld_safe --user=mysql &
+[root@localhost bin]# ./mysql -u root -p
+
+Enter password: 
+密码是安装成功后显示的密码
+;mk2CXyls2pX
+))5vxs7/>iiE
+
+11 设置密码
+mysql> set password=password("123");
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+输入密码出现Access denied for user 'root'@'localhost'(using password: YES)错误。
+1) 先停止mysql 服务
+2)进入mysql安装目录bin/ 使用safe模式，进行重启：
+./mysqld_safe --skip-grant-tables
+3)新开一个终端，使用root账户，在mysql bin下无密码登录(按回车登陆)，修改root用户密码
+[root@localhost bin]# ./mysql -u root -p
+修改密码
+use mysql
+update user set password=PASSWORD("123") where User = 'root';
+5.7版本下的mysql数据库下已经没有password这个字段了，password字段改成了authentication_string
+update user set authentication_string=PASSWORD("123") where User = 'root';
+重启登陆正常
+
+12 将 将mysqld服务加入开机自启动项
+在
+将{mysql}/ support-files/mysql.server 拷贝为/etc/init.d/mysql并设置运行权限，这样就可以使用service mysql命令启动/停止服务， 
+否则就只能使用{mysql}/bin/mysqld_safe &命令来启动服务 
+还需要把mysql.server中basedir的相关路径，改为自定义的路径，默认路径是/usr/local/mysql
+具体操作如下：
+cd /usr/local/mysql/support-files
+[root@localhost support-files]# cp mysql.server /etc/init.d/mysql
+[root@localhost support-files]# chmod +x /etc/init.d/mysql
+-- 把mysql注册为开机启动的服务
+[root@localhost support-files]# chkconfig --add mysql
+
+-- 查看是否添加成功
+[root@localhost support-files]# chkconfig --list mysql 
+
+[root@localhost init.d]# service mysql start
+Starting MySQL... SUCCESS! 
+
+service mysql restart
+
+报ERROR! Couldn't find MySQL server (/usr/local/mysql/bin/mysqld_safe)
+则需修改/etc/init.d/mysql
+把 basedir相关路径改成自己的，默认路径是/usr/local/mysql，具体参照如下：
+basedir=/usr/local/mysql/mysql-5.7.19-linux-glibc2.12-x86_64
+  bindir=/usr/local/mysql/mysql-5.7.19-linux-glibc2.12-x86_64/bin
+  if test -z "$datadir"
+  then
+    datadir=/usr/local/mysql/data
+  fi
+  sbindir=/usr/local/mysql//mysql-5.7.19-linux-glibc2.12-x86_64/bin
+  libexecdir=/usr/local/mysql/mysql-5.7.19-linux-glibc2.12-x86_64/bin
+else
+  bindir="$basedir/bin"
+  if test -z "$datadir"
+  then
+    datadir="$basedir/data"
+  fi
+  sbindir="$basedir/sbin"
+
+还原数据库
+
+source /home/databases.sql
+
+source /home/dbbak/databases.sql
+
+
+mysqldump -u root -p --opt [database name] > [database name].sql 
+mysqldump -u root -p --all-databases >/home/dbbak/databases.sql
+
+mysqldump -u root -p tz_ebank> /home/dbbak/tz_ebank.sql
+mysqldump -u root -p --opt [database name] > [database name].sql 
+
+mysqldump -u root -p tz_ebank> /home/dbbak/tz_ebank.sql;
+rsync -avr /home/dbbak/tz_ebank.sql root@192.168.3.8:/home/
+rsync -avr /home/mas10301.sql root@192.168.3.15:/home/
+或者
+scp /home/to/tz_ebank.sql user@host：/path/to/destination-folder/
+rsync -avlK ./test root@10.22.44.103:/tmp/test 
+
+创建数据库
+[root@localhost etc]# cd /usr/local/mysql/bin
+ [root@localhost bin]# ./mysqld_safe --user=mysql &
+[root@localhost bin]# ./mysql -u root -p
+
+drop database szgq_workflow
+
+szgq_workflow
+
+CREATE DATABASE szgq_workflow DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+mysql> CREATE DATABASE tz_ebank DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+mysql> use tz_ebank;
+
+CREATE DATABASE mas DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+---drop database mas
+api_rpt_bhm
+建议删除tbl_mas_log
+mysql>use mas;
+mysql>SET NAMES gbk;
+mysql> source /home/mas10301.sql;
+ENGINE=MyISAM 把type替换成ENGINE
+ENGINE=InnoDB
+TYPE=InnoDB 替换成ENGINE=InnoDB
+TYPE=MyISAM 替换成 ENGINE=MyISAM;
+
+ ./mysql -u root -p
+错误：
+ERROR 1067 (42000): Invalid default value for 'INPUT_TIME'
+解决如下：
+登陆mysql
+use mas;
+
+mysql> show variables like 'sql_mode' ;
++---------------+-------------------------------------------------------------------------------------------------------------------------------------------+
+| Variable_name | Value                                                                                                                                     |
++---------------+-------------------------------------------------------------------------------------------------------------------------------------------+
+| sql_mode      | ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION |
++---------------+-------------------------------------------------------------------------------------------------------------------------------------------+
+1 row in set (0.00 sec)
+
+mysql> set sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+
+set sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,ALLOW_INVALID_DATES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
+在my.cnf
+sql_mode=ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,ALLOW_INVALID_DATES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
+
+测试是否成功可运行netstat看Mysql端口是否打开，如打开表示服务已经启动，安装成功。Mysql默认的端口是3306。
+
+[root@bogon local]# netstat -nat
+如果看不到tcp        0      0 127.0.0.1:3306，则需要打开防火墙开放3306端口
+tcp        0      0 0.0.0.0:3306                0.0.0.0:*                   LISTEN 
+more /etc/sysconfig/iptables
+vi /etc/sysconfig/iptables
+增加一行 注意：增加的开放3306端口的语句一定要在icmp-host-prohibited之前
+
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 3306 -j ACCEPT  或者
+-A RH-Firewall-1-INPUT -m state --state NEW -m tcp -p tcp --dport 3306 -j ACCEPT
+可以参照22端口设置
+
+
+service  iptables restart
+启动mysql
+service mysql start
+service mysql restart
+
+
+
+13.解决给指定IP访问
+
+mysql> use mysql;
+select host,user from user;
+mysql> select host,user from user;
+更新只允许此IP能访问该数据库
+mysql> update user set host ='125.121.34.16' where host='%';
+mysql> update user set host ='192.168.3.7' where host='%';
+update user set host ='localhost' where host='%';
+给此IP赋权
+mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'125.121.34.16' IDENTIFIED BY '123456' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'125.121.34.16' IDENTIFIED BY '123' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY '123' WITH GRANT OPTION;
+刷新权限
+mysql> flush privileges;
+select * from user;
+
+如果还要加用户，按照如下执行：
+USE mysql;
+select host, user from user;
+update user set host ='localhost' where host='%';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY '123' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+
+update user set host ='192.168.3.7' where host='%';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'192.168.3.7' IDENTIFIED BY '123' WITH GRANT OPTION;
+flush privileges;
+
+
+update user set host ='192.168.3.4' where host='%';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'192.168.3.4' IDENTIFIED BY '123' WITH GRANT OPTION;
+flush privileges;
+
+
+UPDATE USER SET HOST ='localhost' WHERE HOST='%';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY '123' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+
+
+
+
+update user set host = '%' where user = 'root';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '123' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+
+等等
+如果报错误ERROR 1820 (HY000): You must reset your password using ALTER USER statement before executing this statement.
+
+则在mysql下执行（5.7以上版本）
+mysql> ALTER USER USER() IDENTIFIED BY '123';
+Query OK, 0 rows affected (0.03 sec)
+
+
+SET PASSWORD = PASSWORD('123');
+
+MySQL版本5.7.6版本开始的用户可以使用如下命令：
+mysql> ALTER USER USER() IDENTIFIED BY '123';
+
+14 关于中文乱码
+修改 /etc/my.cnf
+vi /etc/my.cnf
+[client]
+default-character-set=utf8 //添加该语句
+
+[mysqld]
+character_set_server=utf8 //添加该语句
+
+发现错误：
+Incorrect string value: '\xE5\x91\xBD\xE4\xBB\xA4...' for column 'u1' at row 1
+
+Incorrect string value: '\xE5\x91\xBD\xE4\xBB\xA4...' for column 'u1' at row 1
+查询
+
+先修改 alter table werewolf default character set utf8;  //如果不是再修改
+
+先查询那些字段编码有问题
+SHOW FULL COLUMNS FROM werewolf;//werewolf是表名
+发现 name、u1等字段的Collation项非utf8，修改它！
+
+alter table werewolf change name name varchar(100) character set utf8 collate utf8_unicode_ci not null default '';  
+alter table werewolf change u1 u1  varchar(100) character set utf8 collate utf8_unicode_ci not null default '';  
+
+其他报错信息：
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+报错信息如下：
+/libstdc++.so.6
+
+strings /lib64/libc.so.6 |grep GLIBC_
+strings /lib/libstdc++.so.6 |grep GLIBCXX_
+如果报
+./mysqld: /usr/lib/libnuma.so.1: no version information available (required by ./mysqld)
+./mysqld: /usr/lib/libnuma.so.1: no version information available (required by ./mysqld)
+./mysqld: /usr/lib/libstdc++.so.6: version `GLIBCXX_3.4.11' not found (required by ./mysqld)
+./mysqld: /usr/lib/libstdc++.so.6: version `GLIBCXX_3.4.9' not found (required by ./mysqld)
+./mysqld: /lib/libc.so.6: version `GLIBC_2.11' not found (required by ./mysqld)
+./mysqld: /lib/libc.so.6: version `GLIBC_2.10' not found (required by ./mysqld)
+strings /usr/lib/vmware-tools/lib32/libstdc++.so.6/libstdc++.so.6 | grep GLIBCXX 
+在全系统查找libstdc++.so文件
+
+
+[root@localhost bin]# strings /usr/lib/libstdc++.so.6 | grep GLIBCXX 
+GLIBCXX_3.4
+GLIBCXX_3.4.1
+GLIBCXX_3.4.2
+GLIBCXX_3.4.3
+GLIBCXX_3.4.4
+GLIBCXX_3.4.5
+GLIBCXX_3.4.6
+GLIBCXX_3.4.7
+GLIBCXX_3.4.8
+GLIBCXX_FORCE_NEW
+
+sudo find / -name libc.so.6 * #ls -l libstdc++.so*
+安装 
+全网查找
+sudo find / -name libstdc++.so.6* #ls -l libstdc++.so*
+在
+/usr/lib/vmware-tools/lib32/libstdc++.so.6/libstdc++.so.6
+找到
+cd /usr/lib/
+cp libstdc++.so.6 libstdc++.so.6-bf
+
+rm  libstdc++.so.6
+[root@localhost lib]# cd /usr/lib/vmware-tools/lib32/libstdc++.so.6
+cp libstdc++.so.6 /usr/lib/
+
+假设已经删除掉了原来的libstdc++.so.6，现在建立新的指向libstdc++.so.6.0.20的软链接：
+
+ln -s libstdc++.so.6.0.20 libstdc++.so.6
+拷贝直接覆盖也可以
+
+
+[root@localhost bin]# strings /lib/libc.so.6 |grep GLIBC_
+GLIBC_2.0
+GLIBC_2.1
+GLIBC_2.1.1
+GLIBC_2.1.2
+GLIBC_2.1.3
+GLIBC_2.2
+GLIBC_2.2.1
+GLIBC_2.2.2
+GLIBC_2.2.3
+GLIBC_2.2.4
+GLIBC_2.2.6
+GLIBC_2.3
+GLIBC_2.3.2
+GLIBC_2.3.3
+GLIBC_2.3.4
+GLIBC_2.4
+GLIBC_2.5
+GLIBC_PRIVATE
+[root@localhost bin]# rpm -qa |grep glibc
+glibc-common-2.5-42
+glibc-headers-2.5-42
+glibc-2.5-42
+glibc-devel-2.5-42
+可以看到最高只支持2.5版本，所以考虑编译解决这个问题：
+下载地址：http://ftp.gnu.org/gnu/glibc/
+bin/mysqld --initialize --user=mysql --basedir=/usr/local/mysql --datadir=/data/mysql
+
+
+libstdc++6_4.7.2-5_amd64.deb
+你
+
+自己则修改SSH中的Operation-------- >File Transer Mode------------>（选）Binary
+拷贝 glibc-2.11.1.tar.gz到任意目录下，我拷贝到/usr/local
+安装glibc-2.11.1.tar.gz 解决/lib/libc.so.6: version `GLIBC_2.10' not found (required by ./mysqld)
+tar -xzvf glibc-2.5.tar.gz
+tar -xzvf glibc-2.11.1.tar.gz
+[root@localhost local]# cd glibc-2.11.1 
+[root@localhost glibc-2.5]# ls
+
+[root@localhost glibc-2.5]# mkdir build
+[root@localhost glibc-2.5]# cd build
+[root@localhost build]# ls
+pwd
+/usr/local/glibc-2.11.1/build
+/usr/local/glibc-2.11.1/build
+
+[root@localhost build]# ../configure --prefix=/opt/glibc-2.11.1/ --with-headers=/usr/include
+
+/usr/src/glibc-2.11/configure --prefix=/usr/src/glibc-2.11-build/ --with-headers=/usr/include
+
+如果报configure: error: gcc must provide the <cpuid.h> header
+[root@localhost gcc-4.5.1]# sudo find / -name cpuid.h
+sudo find / -name cpuid.h
+ sudo find / -name cpuid.h
+/usr/local/gcc-4.5.1/gcc/config/i386/cpuid.h
+/usr/src/kernels/2.6.18-164.el5-i686/include/config/x86/cpuid.h
+
+[root@localhost x86]# cp cpuid.h /usr/include
+[root@localhost x86]# cd /usr/include/
+问题解决
+继续安装
+[root@localhost build]# make -j4 
+[root@localhost build]# sudo make install
+
+gcc下载地址：
+ http://ftp.gnu.org/gnu/gcc/gcc-4.5.1/
+
+改变环境变量
+export LD_LIBRARY_PATH=/opt/glibc-2.5/lib:$LD_LIBRARY_PATH
+
+C:\Users\Administrator\Downloads
+tar -xzvf gcc-4.5.1.tar.gz
+
+卸载mysql
+
+find / -name mysql 
+[root@localhost data]# find / -name mysql 
+/etc/rc.d/init.d/mysql
+/var/lock/subsys/mysql
+/usr/share/mysql
+/usr/local/mysql
+/usr/local/mysql/mysql-5.7.19-linux-glibc2.12-x86_64/bin/mysql
+/usr/local/mysql/mysql-5.7.19-linux-glibc2.12-x86_64/include/mysql
+/usr/local/mysql/data/mysql
+
+[root@localhost data]# rm -rf /etc/rc.d/init.d/mysql
+[root@localhost data]# rm -rf /var/lock/subsys/mysql
+[root@localhost data]# rm -rf /usr/share/mysql
+[root@localhost data]# rm -rf /usr/local/mysql
+删除mysql配置文件
+
+（1）执行rm -rf /etc/my.cnf命令删除/etc/my.cnf文件
+[root@localhost data]# rm -rf /etc/my.cnf
+
+（2）执行rm -rf /etc/init.d/mysqld命令删除/etc/init.d/下跟mysql有关的全部文件，一般包括mysql文件或mysqld文件,如果存在mysql文件则执行rm -rf/etc/init.d/mysql命令
+	
+
+
+Can't find error-message file '/usr/local/mysql/share/errmsg.sys'. Check error-message file location and 'lc-messages-dir' configuration directive.
+
+2019-10-14T03:35:45.408815Z 0 [Warning] No existing UUID has been found, so we assume that this is the first time that this server has been started. Generating a new UUID: b4b61e7f-ee33-11e9-9c61-000c29e1e997.
+2019-10-14T03:35:45.410716Z 0 [Warning] Gtid table is not ready to be used. Table 'mysql.gtid_executed' cannot be opened.
+2019-10-14T03:35:45.412421Z 1 [Note] A temporary password is generated for root@localhost: ;mk2CXyls2pX
+
+then
+  basedir=/usr/local/mysql
+  bindir=/usr/local/mysql/bin
+  if test -z "$datadir"
+  then
+    datadir=/usr/local/mysql/data
+  fi
+  sbindir=/usr/local/mysql/bin
+  libexecdir=/usr/local/mysql/bin
+else
+  bindir="$basedir/bin"
+  if test -z "$datadir"
+  then
+    datadir="$basedir/data"
+  fi
+  sbindir="$basedir/sbin"
+  libexecdir="$basedir/libexec"
+fi
+Starting MySQL... ERROR! The server quit without updating PID file (/usr/local/mysql/data/localhost.localdomain.pid).
+
+./mysql_install_db --user=mysql --basedir=/usr/local/mysql --datadir=/usr/local/mysql/data --pid-file=/usr/local/mysql/data/localhost.localdomain.pid --tmpdir=/tmp
+
+
+Starting MySQL... ERROR! The server quit without updating PID file (/usr/local/mysql/data/localhost.localdomain.pid).
+
+[root@localhost bin]# ./mysqld --initialize --user=mysql --basedir=/usr/local/mysql/ --datadir=/usr/local/mysql/data/ --lc_messages_dir=/usr/local/mysql/share --lc_messages=en_US
+2019-10-15T07:38:36.544776Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use --explicit_defaults_for_timestamp server option (see documentation for more details).
+2019-10-15T07:38:36.927079Z 0 [Warning] InnoDB: New log files created, LSN=45790
+2019-10-15T07:38:37.018856Z 0 [Warning] InnoDB: Creating foreign key constraint system tables.
+2019-10-15T07:38:37.093098Z 0 [Warning] No existing UUID has been found, so we assume that this is the first time that this server has been started. Generating a new UUID: cc866ff8-ef1e-11e9-b168-000c29e1e997.
+2019-10-15T07:38:37.095030Z 0 [Warning] Gtid table is not ready to be used. Table 'mysql.gtid_executed' cannot be opened.
+2019-10-15T07:38:37.096687Z 1 [Note] A temporary password is generated for root@localhost: ))5vxs7/>iiE
+
+
+
+安装jdk1.4 
+下载https://www.oracle.com/java/technologies/java-archive-javase-v14-downloads.html
+1.上传jdk1.4  j2eesdk-1_4_03-linux.bin在/usr下
+[root@localhost usr]# chmod a+x ./j2sdk-1_4_2_19-linux-i586.bin
+[root@localhost usr]# [root@localhost usr]# ./j2sdk-1_4_2_19-linux-i586.bin
+报错误：
+Extracting...
+./j2sdk-1_4_2_19-linux-i586.bin: ./install.sfx.2985: /lib/ld-linux.so.2: bad ELF interpreter: No such file or directory
+由于操作系统是64位，而这个版本的JDK是32位的，需要安装一些32位的安装包。结果我安装过程中出现如下错误。
+
+[root@localhost usr]# ls
+bin    glibc-2.12-1.212.el6.i686.rpm  j2sdk1.4.2_19                  java   libexec                                              sbin   tmp
+etc    include                        j2sdk-1_4_2_19-linux-i586.bin  lib    local                                                share
+games  j2sdk-1_4_2_10-linux-ia64.bin  j2sdk-1_4_2_19-linux-ia64.bin  lib64  nss-softokn-freebl-devel-3.14.3-23.3.el6_8.i686.rpm  src
+[root@localhost usr]# rpm -ivh glibc-2.12-1.212.el6.i686.rpm
+报错
+error: Failed dependencies:
+        glibc-common = 2.12-1.212.el6 is needed by glibc-2.12-1.212.el6.i686
+        libfreebl3.so is needed by glibc-2.12-1.212.el6.i686
+        libfreebl3.so(NSSRAWHASH_3.12.3) is needed by glibc-2.12-1.212.el6.i686
+glibc-2.12-1.212.el6.i686.rpm下载地址：http://rpmfind.net/linux/rpm2html/search.php?query=glibc
+nss-softokn-freebl-3.14.3-23.3.el6_8.i686.rpm 下载地址：http://rpmfind.net/linux/RPM/System_Environment_Base.html
+rpm -ivh glibc-2.12-1.212.el6.i686.rpm  nss-softokn-freebl-3.14.3-23.3.el6_8.i686.rpm --nodeps --force
+重新安装
+[root@localhost usr]# rm -rf j2sdk1.4.2_19
+[root@localhost usr]# ls
+bin    glibc-2.12-1.212.el6.i686.rpm  j2sdk-1_4_2_19-linux-i586.bin  lib      local                                                sbin   tmp
+etc    include                        j2sdk-1_4_2_19-linux-ia64.bin  lib64    nss-softokn-freebl-3.14.3-23.3.el6_8.i686.rpm        share
+games  j2sdk-1_4_2_10-linux-ia64.bin  java                           libexec  nss-softokn-freebl-devel-3.14.3-23.3.el6_8.i686.rpm  src
+[root@localhost usr]# ./j2sdk-1_4_2_19-linux-i586.bin
+mkdir /usr/java/javal.4
+mv ./j2sdk1.4.2_19 /usr/java/javal.4
+
+修改所有用户的环境变量
+
+    # vi /etc/profile
+
+    在该文件中最后加入:
+vi下SHITT+g到最后，在按A
+
+export JAVA_HOME=/usr/java/j2sdk1.4.2_19
+export CLASSPATH=$CLASSPATH:$JAVA_HOME/lib:$JAVA_HOME/jre/lib
+export PATH=$JAVA_HOME/bin:$JAVA_HOME/jre/bin:$PATH:$HOMR/bin
+
+例如：
+unset i
+unset -f pathmunge
+export JAVA_HOME=/usr/java/j2sdk1.4.2_19
+export CLASSPATH=$CLASSPATH:$JAVA_HOME/lib:$JAVA_HOME/jre/lib
+export PATH=$JAVA_HOME/bin:$JAVA_HOME/jre/bin:$PATH:$HOMR/bin
+  一定要在CLASSPATH路径中加入$CLASSPATH
+
+
+安装tomcat（目前安装5.0，由于jdk1.4无法再tomcat5.5下运行，报错This release of Apache Tomcat was packaged to run on J2SE 5.0 
+or later. It can be run on earlier JVMs by downloading and 
+installing a compatibility package from the Apache Tomcat 
+binary download page.
+）
+1. 将文件上传至/usr/local.
+
+　　2. 解压 　　tar -zxvf apache-tomcat-5.5.36.tar.gz
+
+　　3.重命名　　mv apache-tomcat-5.5.36   tomcat
+
+　　4.启动Tomcat　　　
+
+　　　　　　　　cd bin
+
+　　　　　　　　./startup.sh
+
+[root@localhost local]# cd apache-tomcat-5.5.36
+[root@localhost apache-tomcat-5.5.36]# cd bin
+[root@localhost bin]# ./startup.sh
+Using CATALINA_BASE:   /usr/local/apache-tomcat-5.5.36
+Using CATALINA_HOME:   /usr/local/apache-tomcat-5.5.36
+Using CATALINA_TMPDIR: /usr/local/apache-tomcat-5.5.36/temp
+Using JRE_HOME:        /usr/java/j2sdk1.4.2_19
+Using CLASSPATH:       /usr/local/apache-tomcat-5.5.36/bin/bootstrap.jar
+
+开放8080端口
+vi /etc/sysconfig/iptables
+service  iptables restart
+查看ps -ef|grep java
+kill  -9 tomcat_id
+安装tomcat5.0
+2. 解压 　　tar -zxvf jakarta-tomcat-5.0.28.tar.gz 
+
+　　3.重命名　　mv jakarta-tomcat-5.0.28   tomcat
+
+　　4.启动Tomcat　　
+
+tail -f ../logs/catalina.out
+
+tomcat启动脚本
+1、进入/etc/init.d
+
+2、新建文件tomcat，内容如下：
+
+
+#!/bin/sh
+# chkconfig: 345 99 10
+# description: Auto-starts tomcat
+# /etc/init.d/tomcat
+# Tomcat auto-start
+# Source function library.
+#. /etc/init.d/functions
+# source networking configuration.
+#. /etc/sysconfig/network
+RETVAL=0
+export JAVA_HOME=/usr/java/j2sdk1.4.2_19
+export CATALINA_HOME=/usr/local/jakarta-tomcat-5.0.28
+export CATALINA_BASE=/usr/local/jakarta-tomcat-5.0.28
+start()
+{
+        if [ -f $CATALINA_HOME/bin/startup.sh ];
+          then
+            echo $"Starting Tomcat"
+                $CATALINA_HOME/bin/startup.sh
+            RETVAL=$?
+            echo " OK"
+            return $RETVAL
+        fi
+}
+stop()
+{
+        if [ -f $CATALINA_HOME/bin/shutdown.sh ];
+          then
+            echo $"Stopping Tomcat"
+                $CATALINA_HOME/bin/shutdown.sh
+            RETVAL=$?
+            sleep 1
+            ps -fwwu tomcat | grep apache-tomcat|grep -v grep | grep -v PID | awk '{print $2}'|xargs kill -9
+            echo " OK"
+            # [ $RETVAL -eq 0 ] && rm -f /var/lock/...
+            return $RETVAL
+        fi
+}
+
+case "$1" in
+ start) 
+        start
+        ;;
+ stop)  
+        stop
+        ;;
+                                                
+ restart)
+         echo $"Restaring Tomcat"
+         $0 stop
+         sleep 1
+         $0 start
+         ;;
+ *)
+        echo $"Usage: $0 {start|stop|restart}"
+        exit 1
+        ;;
+esac
+exit $RETVAL
+
+3、添加执行权限
+
+sudo chmod +x /etc/init.d/tomcat
+4、随系统启动
+
+[root@localhost init.d]# chkconfig --add tomcat
+
+测试tomcat能不能启动 启动tomcat： service tomcat start
+
+测试tomcat能不能停止 停止tomcat：  service tomcat stop
+
+ 
+
+启动方式中该服务是启动 #chkconfig tomcat on 　
+
+#chkconfig --list tomcat
+
+16 、数据库操作
+
+1）查看显示所有数据库
+mysql> show databases;
+2）：查看当前使用的数据库
+select database();
+
+3）：查看数据库使用端口
+show variables  like 'port';
+
+4）：查看当前数据库大小
+a）我要查看INVOICE数据库的大小，那么可以通过下面SQL查看
+use  information_schema
+select concat(round(sum(data_length)/(1024*1024),2) + round(sum(index_length)/(1024*1024),2),'MB') as 'DB Size'
+    from tables  where table_schema='INVOICE';
+b）查看数据所占的空间大小
+use information_schema;
+select concat(round(sum(data_length)/(1024*1024),2),'MB') as 'DB Size'
+   from tables where table_schema='INVOICE';
+c）查看索引所占的空间大小
+select concat(round(sum(index_length)/(1024*1024),2),'MB') as 'DB Size' 
+     from tables where table_schema='INVOICE';
+
+5）：查看数据库编码
+show variables like 'character%';
+
+
+character_set_client      为客户端编码方式；
+
+character_set_connection  为建立连接使用的编码；
+
+character_set_database    为数据库的编码；
+
+character_set_results     为结果集的编码；
+
+character_set_server      为数据库服务器的编码；
+
+只要保证以上采用的编码方式一样，就不会出现乱码问题。
+
+show variables like 'collation%';
+
+status也可以查看数据库的编码
+
+mysql> status;
+
+6）：查看数据库的表信息
+show tables;
+
+7）：查看数据库的所有用户信息
+select distinct concat('user: ''',user,'''@''',host,''';') as query from mysql.user;
+
+8): 查看某个具体用户的权限
+
+show grants for 'root'@'localhost';
+
+9)： 查看数据库的最大连接数
+
+show variables like '%max_connections%';
+
+10)：查看数据库当前连接数，并发数。
+show status like 'Threads%';
+
+Threads_cached : 代表当前此时此刻线程缓存中有多少空闲线程。
+
+Threads_connected :代表当前已建立连接的数量，因为一个连接就需要一个线程，所以也可以看成当前被使用的线程数。
+
+Threads_created :代表从最近一次服务启动，已创建线程的数量。
+
+Threads_running :代表当前激活的（非睡眠状态）线程数。并不是代表正在使用的线程数，有时候连接已建立，但是连接处于sleep状态，这里相对应的线程也是sleep状态。
+
+11）：查看数据文件存放路径
+
+show variables like '%datadir%';
+
+
+17、mysql备份
+1.备份单个库
+/usr/local/mysql/bin
+
+mysqldump -u root -p test>/home/dbbak/test_2019101001.sql
+/usr/local/mysql/bin/  mysqldump -uroot -p abc > abc.sql
+[root@localhost bin]# ./mysqldump -u root -p --all-databases >/home/databases2.sql//备份整个数据库
+
+mysql -u root -p < D://qianwan0412.sql
+
+./mysqldump -uroot -p tz_ebank > /home/tz_ebank1030.sql
+./mysqldump -uroot -p mas > /home/tz_ebank1030.sql
+2.备份整个表
+mysqldump -u root -p --all-databases >/home/dbbak/databases.sql
+mysqldump -u root -p --all-databases >/home/dbbak/databases1.sql
+mysqldump -u root -h 192.168.3.4 -P 3306 -p --all-databases > databases2.sql
+mysqldump -u root -h 192.168.3.4 -P 3306 -p --all-databases > c://qianwan0412.sql
+
+创建数据库
+[root@localhost etc]# cd /usr/local/mysql/bin
+ [root@localhost bin]# --./mysqld_safe --user=mysql &
+[root@localhost bin]# ./mysql -u root -p
+
+ALTER USER 'root’@’’ IDENTIFIED WITH mysql_native_password BY ‘123456’;
+ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY '123456';
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '123456';
+CREATE DATABASE mas DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+CREATE DATABASE szgq_workflow DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '123456';
+mysqld --console --skip-grant-tables --shared-memory
+mysql> CREATE DATABASE mas DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+mysql> use mas;
+GRANT ALL PRIVILEGES ON *.* TO 'java'@'%' IDENTIFIED BY 'java' WITH GRANT OPTION;//授权所有客户端登陆
+GRANT ALL PRIVILEGES ON *.* TO 'java'@'localhost' IDENTIFIED BY 'java' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+
+
+GRANT ALL PRIVILEGES ON *.* TO 'dutest'@'localhost' IDENTIFIED BY 'test123' WITH GRANT OPTION;  //只能在本地登录
+grant all privileges on mq.* to test@localhost identified by '1234';
+GRANT ALL PRIVILEGES ON *.* TO 'dutest'@'%' IDENTIFIED BY 'test123' WITH GRANT OPTION;//授权所有客户端登陆
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'125.121.34.16' IDENTIFIED BY '123' WITH GRANT OPTION;  //授权ip地址登陆
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '123' WITH GRANT OPTION;//授权所有客户端登陆
+还远
+mysql> source /home/tz_ebank.sql;
+
+数据库迁移
+
+1.导出数据和表结构：
+
+mysqldump -u用户名 -p密码 数据库名 > 数据库名.sql
+
+/usr/local/mysql/bin/  mysqldump -uroot -p abc > abc.sql
+导出数据库时错误，由于数据库大导致
+mysqldump: Got error: 2013: Lost connection to MySQL server during query when retrieving data from servers
+
+解决：
+mysql> show global variables like '%timeout%';
+set global net_read_timeout = 120; 
+set global net_write_timeout = 900;
+show global variables like '%timeout%';
+
+2、导入数据库
+
+方法一：
+
+（1）选择数据库
+
+1
+mysql>use abc;
+（2）设置数据库编码
+
+1
+mysql>set names utf8;
+（3）导入数据（注意sql文件的路径）
+
+1
+mysql>source /home/abc/abc.sql;
+方法二：
+
+mysql -u用户名 -p密码 数据库名 < 数据库名.sql
+
+1
+mysql -uabc_f -p abc < abc.sql
+./mysql -uroot -p mas < /home/mas10301.sql
+
+./mysql -u root -p
+建议使用第二种方法导入。
+mysql -uroot -p szgq_workflow < d:\szgq_workflow.sql;
+删除数据库表
+drop database mas;
+
+设置网络
+查看本机使用的网卡，找到自己要使用的网卡
+ifconfig -a
+
+编辑ip配置文件
+
+vim /etc/sysconfig/network-scripts/ifcfg-eth0
+vi /etc/sysconfig/network-scripts/ifcfg-eth0
+
+
+DEVICE=eth0（网卡接口名）
+
+
+BOOTPROTO=static（取值static/none/DHCP)
+
+
+HWADDR=00:C2:A5:F5:80:65（网卡mac地址）
+
+
+IPADDR=192.168.3.11（IP地址）
+
+
+GATEWAY=192.168.3.10
+
+NETMASK=255.255.255.0（子网掩码）
+
+
+ONBOOT=yes（指明在系统启动时是否激活网卡)
+
+
+重启网卡服务，执行service network restart
+————————————————
+------------------------------------------------------------------------------------------------
+rpm -e --nodeps mysql-5.7.28-1.el6.x86_64.rpm-bundle.tar 安装
+卸载原有mysql依赖包
+rpm -qa | grep -i mysql
+
+1.卸载
+rpm -e --nodeps mysql-libs-5.1.71-1.el6.x86_64
+find / -name mysql
+rm -rf /var/lib/mysql
+2.解压
+tar xvf mysql-5.7.28-1.el6.x86_64.rpm-bundle.tar
+
+3.按照顺序安装以下5个文件
+rpm -ivh mysql-community-common-5.7.28-1.el6.x86_64.rpm --force --nodeps
+rpm -ivh mysql-community-libs-5.7.28-1.el6.x86_64.rpm 
+rpm -ivh mysql-community-devel-5.7.28-1.el6.x86_64.rpm 
+rpm -ivh mysql-community-client-5.7.28-1.el6.x86_64.rpm 
+rpm -ivh mysql-community-server-5.7.28-1.el6.x86_64.rpm 
+
+卸载
+
+ rpm -qa | grep -i mysql
+rpm -ev --nodeps mysql-community-libs-5.7.28-1.el6.x86_64
+rpm -ev --nodeps mysql-community-server-5.7.28-1.el6.x86_64
+rpm -ev --nodeps mysql-community-client-5.7.28-1.el6.x86_64
+rpm -ev --nodeps mysql-community-devel-5.7.28-1.el6.x86_64
+rpm -ev --nodeps mysql-community-common-5.7.28-1.el6.x86_64
+
+find / -name mysql
+
+rm -rf /var/lib/mysql
+rm -rf /usr/lib64/mysql
+rm -rf /usr/share/mysql
+rm -rf /etc/my.cnf
+
+
+find / -name mysqld
+
+以下是解压的所有包
+mysql-community-server-5.7.28-1.el6.x86_64.rpm
+mysql-community-client-5.7.28-1.el6.x86_64.rpm
+mysql-community-embedded-devel-5.7.28-1.el6.x86_64.rpm
+mysql-community-common-5.7.28-1.el6.x86_64.rpm
+mysql-community-test-5.7.28-1.el6.x86_64.rpm
+mysql-community-libs-5.7.28-1.el6.x86_64.rpm
+mysql-community-devel-5.7.28-1.el6.x86_64.rpm
+mysql-community-embedded-5.7.28-1.el6.x86_64.rpm
+mysql-community-libs-compat-5.7.28-1.el6.x86_64.rpm
+4、启动mysql
+service mysqld start
+启动失败，查看日志
+more /var/log/mysqld.log
+cat /var/log/mysqld.log
+启动报错
+  whereis mysql
+which mysql
+
+
+[ERROR] --initialize specified but the data directory has files in it. Aborting.
+
+原因：
+已经初始化，但没有成功，想再次初始化报错。
+解决：
+数据文件目录有其他的文件，这个data目录应该是一个空目录；
+查看/etc/my.cnf文件里面的data目录是哪个，把里面的文件删除。
+
+datadir=/var/lib/mysql
+socket=/var/lib/mysql/mysql.sock
+
+然后删除
+rm -rf /var/lib/mysql/*
+
+chmod -R 777 /var/lib/mysql
+------------------------------------------------------------------------------------------------
+参考https://blog.csdn.net/a1173537204/article/details/88377518
+安装mysql-5.7.19-1.el6.x86_64.rpm-bundle.tar
+卸载原有mysql依赖包
+rpm -qa | grep -i mysql
+
+
+rpm -e --nodeps mysql-libs-5.1.71-1.el6.x86_64
+find / -name mysql
+rm -rf /var/lib/mysql
+2.解压
+
+tar xvf mysql-5.7.19-1.el6.x86_64.rpm-bundle.tar
+3.安装
+rpm -ivh mysql-community-common-5.7.19-1.el6.x86_64.rpm 
+rpm -ivh mysql-community-libs-5.7.19-1.el6.x86_64.rpm 
+rpm -ivh mysql-community-devel-5.7.19-1.el6.x86_64.rpm 
+rpm -ivh mysql-community-client-5.7.19-1.el6.x86_64.rpm 
+rpm -ivh mysql-community-server-5.7.19-1.el6.x86_64.rpm 
+
+4.启动mysql
+
+ service mysqld start（第一次可能会失败，再试一次即可）
+
+5.获取mysql初始化密码
+grep 'temporary password' /var/log/mysqld.log
+[root@localhost usr]# grep 'temporary password' /var/log/mysqld.log
+2019-11-01T07:54:11.845529Z 1 [Note] A temporary password is generated for root@localhost: 6on!NVI+)SQo
+
+6.修改mysql密码
+mysqladmin -u root -p password
+
+7.登陆
+ mysql -u root -p
+8、数据库查看编码
+
+mysql>SHOW VARIABLES LIKE '%char%';
+
+发现字符编码有latin1
+
+9.修改/etc/my.cnf (默认在这个目录)
+[client]
+default-character-set=utf8
+[mysqld]
+character-set-server=utf8
+
+
+
+重启 service mysqld restart
+最后，赋予任何主机访问数据的权限
+
+
+mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '123' WITH GRANT OPTION;
+
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+
+mysql>Flush privileges;
+
+
+
+[client]
+default-character-set=utf8
+[mysqld]
+character-set-server=utf8
+
+---------------------------------------------------------------------------
+
+tar xvf mysql-5.7.25-1.el6.x86_64.rpm-bundle.tar
+3.安装
+rpm -ivh mysql-community-common-5.7.25-1.el6.x86_64.rpm 
+rpm -ivh mysql-community-libs-5.7.25-1.el6.x86_64.rpm 
+rpm -ivh mysql-community-devel-5.7.25-1.el6.x86_64.rpm 
+rpm -ivh mysql-community-client-5.7.25-1.el6.x86_64.rpm 
+rpm -ivh mysql-community-server-5.7.25-1.el6.x86_64.rpm 
+
+----------------------------------------------
+修改
+
+No connection. Trying to reconnect...
+ERROR 2005 (HY000): Unknown MySQL server host '12:43:20','6','6',2,'1','1','3','1','0','0',NULL,'1','1',NULL,'','0');' (0)
+ERROR: 
+Can't connect to the server
+
+No connection. Trying to reconnect...
+ERROR 2005 (HY000): Unknown MySQL server host '12:43:20','6','6',2,'1','1','3','1','0','0',NULL,'1','1',NULL,'','0');' (0)
+
+因为在平时工作中经常使用mysqldump命令导出备份数据，然后用mysql客户端命令行工具中的source命令导入数据，从来没有出过错，唯一的区别是字符集不同，这次要导入的数据库的字符集是utf8，所以就联想到是不是需要为mysql客户端命令行工具指定字符集，在查看了帮助后，用如下命令打开mysql客户端工具./mysql -u root -p -default-character-set=utf8，然后再导入备份数据，一切ok。
+
+./mysql -uroot -p –default-character-set=utf8
+./mysql -u root -p
+
+
+同步时间：
+二十、同步时间
+
+1.修改时区
+
+cp -y /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+vim  /etc/sysconfig/clock
+修改如下：
+ZONE="Asia/Shanghai"
+UTC=false
+ARC=false
+
+2.同步时间
+
+/usr/sbin/ntpdate -u cn.pool.ntp.org
+
+
+3.写入硬件时间
+
+服务器每次重启都会参考硬件的时间，所以需要将当前系统的时间写入到硬件。
+
+查看当前硬件时间：
+
+hwclock -r
+[root@localhost ~]# hwclock -r
+Thu 12 May 2016 08:05:43 PM CST  -0.674165 seconds
+写入硬件时间：
+
+hwclock -w
+自动时间同步
+
+4.配置开机启动校验
+
+vim /etc/rc.d/rc.local
+
+/usr/sbin/ntpdate -u cn.pool.ntp.org> /dev/null 2>&1; /sbin/hwclock -w
+
+5.配置定时任务
+
+vim /etc/crontab
+
+00 10 * * * root /usr/sbin/ntpdate -u cn.pool.ntp.org > /dev/null 2>&1; /sbin/hwclock -w
+或者
+
+crontab -e
+
+00 10 * * * /usr/sbin/ntpdate -u cn.pool.ntp.org > /dev/null 2>&1; /sbin/hwclock -w
+JAVA_HOME=/usr/java/jdk1.8.0_231-amd64
+CLASSPATH=$JAVA_HOME/lib/
+PATH=$PATH:$JAVA_HOME/bin
+export JAVA_HOME CLASSPATH PATH

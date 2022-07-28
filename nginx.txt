@@ -1,0 +1,67 @@
+cd c:/
+c:\> dir
+c:\> cd nginx-1.14.2
+ c:\>nginx.exe
+或者
+start nginx 建议
+
+停止nginx
+命令行进入nginx根目录，执行如下命令，停止服务器：
+
+# 强制停止nginx服务器，如果有未处理的数据，丢弃
+D:/resp_application/nginx-1.13.5> nginx -s stop
+
+# 优雅的停止nginx服务器，如果有未处理的数据，等待处理完成之后停止
+D:/resp_application/nginx-1.13.5> nginx -s quit
+
+（3）重新载入Nginx：
+H:\nginx-1.12.2>nginx.exe -s reload
+
+当配置信息修改，需要重新载入这些配置时使用此命令。
+
+ 
+
+（4）重新打开日志文件：
+H:\nginx-1.12.2>nginx.exe -s reopen
+
+
+配置
+upstream votefs {
+   server 192.168.3.20:80;
+}
+    #gzip  on;
+server {
+        listen       90;
+        server_name  gzhpi-2015.6655.la;
+
+        location / {
+            #root   html;
+            #index  index.html index.htm;
+	     proxy_pass http://votefs;
+	    proxy_redirect   off;
+	    proxy_set_header  Host       $host;
+	    proxy_set_header  X-Real-IP    $remote_addr;
+	    proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
+      		proxy_max_temp_file_size 0;
+      		proxy_connect_timeout   90;
+      		proxy_send_timeout     90;
+      		proxy_read_timeout     90;
+      		proxy_buffer_size     4k;
+      		proxy_buffers       4 32k;
+      		proxy_busy_buffers_size  64k;
+      		proxy_temp_file_write_size 64k;
+		add_header Nginx-Res "http://votefs";
+		#proxy_set_header X-real-ip $remote_addr;
+		#proxy_set_header Host $http_host;
+        }
+
+http://gzhpi-2015.6655.la/votefs/login.jsp
+ location /fsweb/ {
+        proxy_pass http://fsweb/;
+        proxy_set_header Host $host:$server_port;
+    }
+ location /atten/ {
+        proxy_pass http://atten;
+        proxy_set_header Host $host:$server_port;
+    }
