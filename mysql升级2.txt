@@ -313,9 +313,11 @@ rsync -avlK ./test root@10.22.44.103:/tmp/test
 [root@localhost bin]# ./mysql -u root -p
 
 drop database szgq_workflow
-
+create database fmmall default charset utf8mb4 collate utf8mb4_croatian_ci;
+-- 导入/root/test/目录下的test_db.sql文件
+source /root/test/test_db.sql;
 szgq_workflow
-
+显示当前库中所有表的基本信息(所在库、表名、使用的引擎、数据行数、数据大小、表备注等)
 CREATE DATABASE szgq_workflow DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 mysql> CREATE DATABASE tz_ebank DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
@@ -369,12 +371,15 @@ vi /etc/sysconfig/iptables
 -A RH-Firewall-1-INPUT -m state --state NEW -m tcp -p tcp --dport 3306 -j ACCEPT
 可以参照22端口设置
 
+firewall-cmd --add-port=3306/tcp --permanent
 
 service  iptables restart
 启动mysql
 service mysql start
 service mysql restart
+命令：命令：systemctl status firewalld
 
+netstat -apn|grep 3306
 
 
 13.解决给指定IP访问
@@ -390,9 +395,18 @@ update user set host ='localhost' where host='%';
 mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'125.121.34.16' IDENTIFIED BY '123456' WITH GRANT OPTION;
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'125.121.34.16' IDENTIFIED BY '123' WITH GRANT OPTION;
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY '123' WITH GRANT OPTION;
+
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'192.168.0.106' IDENTIFIED BY '123456' WITH GRANT OPTION;
+
+update user set host ='125.121.34.16' where host='%';
+
 刷新权限
 mysql> flush privileges;
 select * from user;
+
+update mysql.user set host='%' where user='root'; 
+
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'192.168.0.106'  WITH GRANT OPTION;
 
 如果还要加用户，按照如下执行：
 USE mysql;
@@ -1257,3 +1271,7 @@ JAVA_HOME=/usr/java/jdk1.8.0_231-amd64
 CLASSPATH=$JAVA_HOME/lib/
 PATH=$PATH:$JAVA_HOME/bin
 export JAVA_HOME CLASSPATH PATH
+
+
+update user set host = '%' where user ='root';
+mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'password' WITH GRANT OPTION;
